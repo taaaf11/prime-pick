@@ -130,10 +130,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
-            Text(
-              result,
-              style: const TextStyle(fontSize: 20),
+            const SizedBox(height: 30),
+            Center(
+              child: SizedBox(
+                width: width / 2,
+                child: SelectionArea(
+                  child: Text(
+                    result,
+                    style: const TextStyle(fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
