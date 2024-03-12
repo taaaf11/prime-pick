@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:iconify_flutter/iconify_flutter.dart';
+import 'package:iconify_flutter/icons/codicon.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'utils.dart';
 
@@ -13,15 +16,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Prime Pick',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blueGrey,
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-        fontFamily: 'Comfortaa'
-      ),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.deepOrange,
+            brightness: Brightness.dark,
+          ),
+          useMaterial3: true,
+          fontFamily: 'Comfortaa'),
       home: const MyHomePage(title: 'Prime Pick'),
     );
   }
@@ -41,22 +43,26 @@ class _MyHomePageState extends State<MyHomePage> {
   late TextEditingController _rangeEndTextController;
   String result = '';
 
-  void _filterPrimes() {
-    setState(() {
-      // get range from the user input
-      int rangeStart = int.parse(_rangeStartTextController.text);
-      int rangeEnd = int.parse(_rangeEndTextController.text);
+  void _getPrimes() {
+    setState(
+      () {
+        // get range from the user input
+        int rangeStart = int.parse(_rangeStartTextController.text);
+        int rangeEnd = int.parse(_rangeEndTextController.text);
 
-      // generate numbers using the given range
-      List<int> numbers = List<int>.generate(
-          rangeEnd - rangeStart + 1, (index) => index + rangeStart);
+        // generate numbers using the given range
+        List<int> numbers = List<int>.generate(
+          rangeEnd - rangeStart + 1,
+          (index) => index + rangeStart,
+        );
 
-      // filter out primes into a list
-      List<int> primes = numbers.where((number) => isPrime(number)).toList();
+        // filter out primes into a list
+        List<int> primes = numbers.where((number) => isPrime(number)).toList();
 
-      // finally, store the result in the string to be shown
-      result = primes.join(', ');
-    });
+        // finally, store the result in the string to be shown
+        result = primes.join(', ');
+      },
+    );
   }
 
   @override
@@ -79,6 +85,17 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await launchUrl(
+                Uri.parse('https://github.com/taaaf11/prime-pick'),
+              );
+            },
+            child: Iconify(Codicon.github,
+                color: Theme.of(context).iconTheme.color),
+          )
+        ],
       ),
       body: Center(
         child: Column(
@@ -87,27 +104,28 @@ class _MyHomePageState extends State<MyHomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Start:', style: TextStyle(fontSize: 21)),
-                const SizedBox(width: 20),
                 SizedBox(
                   width: width / 4,
                   child: TextField(
                     controller: _rangeStartTextController,
+                    decoration: const InputDecoration(hintText: 'Start'),
                     style: const TextStyle(fontSize: 21),
+                    textAlign: TextAlign.center,
                   ),
-                )
+                ),
               ],
             ),
+            const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('End:', style: TextStyle(fontSize: 21)),
-                const SizedBox(width: 29),
                 SizedBox(
                   width: width / 4,
                   child: TextField(
                     controller: _rangeEndTextController,
+                    decoration: const InputDecoration(hintText: 'End'),
                     style: const TextStyle(fontSize: 21),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ],
@@ -116,15 +134,15 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               result,
               style: const TextStyle(fontSize: 20),
-            )
+            ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _filterPrimes,
+        onPressed: _getPrimes,
         tooltip: 'Get!',
         child: const Icon(Icons.filter_alt_sharp),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
